@@ -182,6 +182,7 @@ input[type=number] {
   color: #B6407D;
   font-weight: bold;
 }
+
 .result-item {
   color: rgba(255,255,255,0.5);
   margin: 6px;
@@ -337,6 +338,7 @@ animation: l13 1s infinite linear;
           inputNumber.val("");
           inputNumber.first().focus();
           $(this).addClass('disabled');
+          highlightResults();
       });
       // Xử lý input tự động chuyển vị trí và giới hạn giá trị
       inputNumber.on("input", function () {
