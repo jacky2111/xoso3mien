@@ -114,7 +114,7 @@ body {
   gap: 4px;
 }
 input.numberInput::placeholder {
-color: #636363;
+  color:#393939;
 }
 .numberInput {
   width: 100%;
@@ -126,6 +126,12 @@ color: #636363;
   color: rgba(255,255,255,1);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 5px;
+}
+.numberInput {
+  display: inline-block; /* Giữ layout đẹp khi ẩn input */
+}
+.numberInput:hidden {
+  display: none; /* Ẩn input */
 }
 input.numberInput:focus {
   border: 1px solid #B6407D;
@@ -326,6 +332,7 @@ animation: l13 1s infinite linear;
       const inputNumber = $(".numberInput");
       
       
+      
       $('.btn-delete').click(function () {
           inputNumber.val("");
           inputNumber.first().focus();
@@ -333,20 +340,23 @@ animation: l13 1s infinite linear;
       });
       // Xử lý input tự động chuyển vị trí và giới hạn giá trị
       inputNumber.on("input", function () {
-        const currentIndex = inputNumber.index(this);
-        const nextIndex = currentIndex + 1;
-        let value = $(this).val();
-        
-        if ($(this).val().length === 1) {
-          if (nextIndex < inputNumber.length) {
-            inputNumber.eq(nextIndex).focus();
-          } else {
-            $(this).blur();
-            $('.btn-delete').removeClass('disabled');
+          const currentIndex = inputNumber.index(this);
+          const nextIndex = currentIndex + 1;
+          const visibleInputs = $(".numberInput:visible"); // Lấy các ô input hiển thị
+
+          if ($(this).val().length === 1) {
+              if (nextIndex < visibleInputs.length) {
+                  // Focus vào ô tiếp theo nếu còn ô hiển thị
+                  visibleInputs.eq(nextIndex).focus();
+              } else {
+                  // Không còn ô hiển thị, gọi blur() để kết thúc nhập
+                  $(this).blur();
+                  $('.btn-delete').removeClass('disabled'); // Hiện nút "Xóa"
+              }
           }
-        }
-        highlightResults();
+          highlightResults(); // Gọi highlight sau mỗi lần nhập
       });
+
 
       
       inputNumber.on("focus", function () {
@@ -367,27 +377,45 @@ animation: l13 1s infinite linear;
 
       // Highlight các số trúng
       function highlightResults() {
-        const inputs = $(".numberInput").map(function () {
-          return $(this).val();
-        }).get();
+          const inputs = $(".numberInput:visible") // Chỉ lấy các ô nhập đang hiển thị
+              .map(function () {
+                  return $(this).val();
+              }).get();
 
-        $("#resultList .result-item").each(function () {
-          const resultText = $(this).text();
-          const resultLength = resultText.length;
+          // Lấy thông tin miền từ đài
+          const region = $("#citySelect option:selected").data("region");
 
-          $(this).html(
-            resultText
-              .split("")
-              .map((digit, index) => {
-                const position = index + 7 - resultLength;
-                return inputs[position - 1] === digit
-                  ? `<span class="highlight">${digit}</span>`
-                  : digit;
-              })
-              .join("")
-          );
-        });
+          $("#resultList .result-item").each(function () {
+              const resultText = $(this).text().trim(); // Chuỗi kết quả từ API
+              $(this).html(""); // Reset nội dung
+
+              if (region === "bac") {
+                  // Logic cho miền Bắc: So sánh từng vị trí
+                  resultText.split("").forEach((digit, index) => {
+                      if (inputs[index] === digit) {
+                          $(this).append(`<span class="highlight">${digit}</span>`);
+                      } else {
+                          $(this).append(digit);
+                      }
+                  });
+              } else {
+                  // Logic cho miền Trung/Nam: So sánh với nhiều giải
+                  const resultLength = resultText.length;
+                  $(this).html(
+                      resultText
+                          .split("")
+                          .map((digit, index) => {
+                              const position = index + 7 - resultLength;
+                              return inputs[position - 1] === digit
+                                  ? `<span class="highlight">${digit}</span>`
+                                  : digit;
+                          })
+                          .join("")
+                  );
+              }
+          });
       }
+
 
       const minDate = new Date("2021-01-01"); // Ngày đầu tiên có dữ liệu
       const maxDate = new Date(); // Ngày hiện tại
@@ -433,12 +461,21 @@ animation: l13 1s infinite linear;
         const cityId = $(this).val();
         const region = $("#citySelect option:selected").data("region");
         const date = new Date(datePicker.selectedDates[0]);
-        if (cityId && !isNaN(date.getTime())) {
-          fetchResults(date, cityId, region);
+
+        // Hiển thị hoặc ẩn các ô nhập số
+        if (region === "bac") {
+            $(".numberInput").slice(5).hide(); // Ẩn ô nhập số thứ 6
         } else {
-          alert("Vui lòng chọn đài và ngày hợp lệ.");
+            $(".numberInput").show(); // Hiển thị tất cả ô nhập số
         }
-      });
+
+        if (cityId && !isNaN(date.getTime())) {
+            fetchResults(date, cityId, region);
+        } else {
+            alert("Vui lòng chọn đài và ngày hợp lệ.");
+        }
+    });
+
       
       // Kiểm tra kết quả và tự động lùi ngày nếu cần
       function checkResults(date) {
@@ -502,17 +539,27 @@ animation: l13 1s infinite linear;
               `);
             };
 
-            appendResultRow("Giải ĐB", results.special);
-            appendResultRow("Giải 1", results.prize1);
-            appendResultRow("Giải 2", results.prize2);
-            appendResultRow("Giải 3", results.prize3);
-            appendResultRow("Giải 4", results.prize4);
-            appendResultRow("Giải 5", results.prize5);
-            appendResultRow("Giải 6", results.prize6);
-            appendResultRow("Giải 7", results.prize7);
-
-            if (region !== "bac") {
-              appendResultRow("Giải 8", results.prize8);
+            if (region === "bac") {
+                appendResultRow("Giải ĐB", results.special);
+                appendResultRow("Giải 1", results.prize1);
+                appendResultRow("Giải 2", results.prize2);
+                appendResultRow("Giải 3", results.prize3);
+                appendResultRow("Giải 4", results.prize4);
+                appendResultRow("Giải 5", results.prize5);
+                appendResultRow("Giải 6", results.prize6);
+                appendResultRow("Giải 7", results.prize7);
+                $('.numberInput[placeholder=6]').hide();
+            } else {
+                // Logic cho các đài khác
+                appendResultRow("Giải ĐB", results.special);
+                appendResultRow("Giải 1", results.prize1);
+                appendResultRow("Giải 2", results.prize2);
+                appendResultRow("Giải 3", results.prize3);
+                appendResultRow("Giải 4", results.prize4);
+                appendResultRow("Giải 5", results.prize5);
+                appendResultRow("Giải 6", results.prize6);
+                appendResultRow("Giải 7", results.prize7);
+                appendResultRow("Giải 8", results.prize8);
             }
           } else {
             const newDate = new Date(date);
