@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lấy Kết Quả Xổ Số</title>
+<!--<link rel="stylesheet" href="xoso.css">-->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
+<style>
+
+body {
+  margin: 0;
+  font-family: poppinsregular,Helvetica,Arial,sans-serif !important;
+  overflow: hidden;
+}
+#lotteryBox {
+  max-width: 100%;
+  min-height: 539px;
+  margin: 0 auto;
+  background-color: #0d0d0d;
+  position: relative;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.datepicker-xoso {
+  position: relative;
+  width: 44%;
+}
+.datepicker-xoso .icon-calendar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+.datepicker-xoso .icon-calendar svg {
+  width: 100%;
+  height: 100%;
+}
+.datepicker-xoso .input-control {
+  width: 100%;
+  box-sizing: border-box;
+  outline: 0;
+}
+.flatpickr-calendar {
+  background-color: #414141;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-months .flatpickr-month, span.flatpickr-weekday {
+  background: none;
+}
+.flatpickr-day {
+  border-radius: 8px;
+  border: none;
+}
+.flatpickr-day.today {
+  background-color: rgba(255,255,255,0.2);
+}
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+  background-color: #FF68B6;
+}
+.flatpickr-day.inRange, .flatpickr-day.prevMonthDay.inRange, .flatpickr-day.nextMonthDay.inRange, .flatpickr-day.today.inRange, .flatpickr-day.prevMonthDay.today.inRange, .flatpickr-day.nextMonthDay.today.inRange, .flatpickr-day:hover, .flatpickr-day.prevMonthDay:hover, .flatpickr-day.nextMonthDay:hover, .flatpickr-day:focus, .flatpickr-day.prevMonthDay:focus, .flatpickr-day.nextMonthDay:focus {
+  background-color: rgba(255,255,255,0.1);  
+}
+.input-control {
+  padding: 10px;
+  width: 100%;
+  background: #191818; 
+  color: rgba(255,255,255,0.7);
+  border: 1px solid #555;
+  border-radius: 5px;
+  font-size: 14px;
+  height: 42px;
+}
+  .btn-delete {
+    height: 42px;
+    border: none;
+    cursor: pointer;
+    margin-left: 4px;
+    border-radius: 4px;
+    padding: 0 12px;
+    color: rgba(255,255,255,0.7);
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .btn-delete.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .inputs {
+    display: flex;
+    align-items: center;
+  }
+.inputs label {
+  margin-bottom: 12px;
+  display: block;
+  text-align: left;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+}
+.input-group {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+input.numberInput::placeholder {
+color: #636363;
+}
+.numberInput {
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  outline: 0 !important;
+  font-size: 16px;
+  background: #0d0d0d;
+  color: rgba(255,255,255,1);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 5px;
+}
+  
+  input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.lottery-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  text-align: center;
+}
+  #resultList tr:nth-child(1) .result-item {
+    font-size: 18px;
+  }
+.lottery-table th {
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  padding: 10px;
+  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+}
+.lottery-table td {
+  background-color: #0d0d0d;
+  color: rgba(255,255,255,0.4);
+  font-size: 13px;
+  padding: 10px;
+  text-align: left;
+}
+
+  .lottery-table td:last-child {
+    padding-left: 0;
+  } 
+  #resultList tr:nth-child(even) {
+    td {
+      background-color: rgba(255,255,255,0.05);
+    }
+  }
+.highlight {
+  color: #B6407D;
+  font-weight: bold;
+}
+.result-item {
+  color: rgba(255,255,255,0.5);
+  margin: 6px;
+  display: inline-block;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+.select2-container {
+  width: 54% !important;
+}
+.flatpickr-calendar {
+  width: 272px;
+}
+.dayContainer {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+}
+.flatpickr-days {
+  width: 272px;
+}
+.flatpickr-day {
+  width: 12.5% !important;
+  height: 36px;
+  line-height: 36px;
+}
+.select2-dropdown {
+  background-color: #414141;
+  border-color: rgba(255,255,255,0.1);
+}
+.select2-container--default .select2-selection--single {
+  background-color: #191818;
+  border: 1px solid #555;
+  color: #c2c2c2;
+  height: 100%;
+  font-size: 14px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #c2c2c2;
+  font-size: 14px;
+  line-height: 40px;
+  text-align: left;
+}
+.select2-results__option {
+  text-align: left;
+  color: #c2c2c2;
+  font-size: 14px;
+}
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+  background-color: #FF68B6;
+}
+.select2-container--default .select2-results__option--selected {
+  background-color: #000;
+}
+.select2-container--default .select2-selection--single .select2-selection__clear {
+  display: none;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 40px;
+  width: 40px;
+}
+.error-xoso {
+  color: red;
+  font-size: 13px;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  box-sizing: border-box;
+}
+#loading {
+  text-align:center; 
+  color:white;
+  padding: 24px;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  background-color: rgba(0,0,0,0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 0.5px solid rgba(255,255,255,0.1);
+}
+/* HTML: <div class="loader"></div> */
+.loader {
+width: 50px;
+aspect-ratio: 1;
+border-radius: 50%;
+background: 
+  radial-gradient(farthest-side,#B6407D 94%,#0000) top/8px 8px no-repeat,
+  conic-gradient(#0000 30%,#B6407D);
+-webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
+animation: l13 1s infinite linear;
+}
+@keyframes l13{ 
+100%{transform: rotate(1turn)}
+}
+</style>
+</head>
+<body>
+<div id="lotteryBox">
+  <div class="controls">
+    <div class="datepicker-xoso">
+      <input type="text" id="datePicker" class="input-control" placeholder="Chọn ngày">
+      <span class="icon-calendar">
+      <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="4" width="20" height="18" rx="4" stroke="#c2c2c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 2V6" stroke="#c2c2c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 2V6" stroke="#c2c2c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 10H22" stroke="#c2c2c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      </span> </div>
+    <select id="citySelect" class="input-control">
+      <option value="">Chọn Đài</option>
+    </select>
+  </div>
+  <div class="inputs">
+    <div class="input-group">
+      <input type="number" class="numberInput" placeholder="1" inputmode="numeric" pattern="[0-9]*">
+      <input type="number" class="numberInput" placeholder="2" inputmode="numeric" pattern="[0-9]*">
+      <input type="number" class="numberInput" placeholder="3" inputmode="numeric" pattern="[0-9]*">
+      <input type="number" class="numberInput" placeholder="4" inputmode="numeric" pattern="[0-9]*">
+      <input type="number" class="numberInput" placeholder="5" inputmode="numeric" pattern="[0-9]*">
+      <input type="number" class="numberInput" placeholder="6" inputmode="numeric" pattern="[0-9]*">
+    </div>
+    <button type="button" class="btn-delete disabled">Xóa</button>
+  </div>
+  <div id="loading" style="display: none">
+    <div class="loader"></div>
+  </div>
+  <table class="lottery-table">
+    <tbody id="resultList">
+    </tbody>
+  </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> 
+<script>
+    $(document).ready(function () {
+      const cityApiUrl = "https://lode88.com/api/v1/lode/cities";
+      const resultApiUrl = "https://lode88.com/api/v1/lode/results";
+      const inputNumber = $(".numberInput");
+      
+      
+      $('.btn-delete').click(function () {
+          inputNumber.val("");
+          inputNumber.first().focus();
+          $(this).addClass('disabled');
+      });
+      // Xử lý input tự động chuyển vị trí và giới hạn giá trị
+      inputNumber.on("input", function () {
+        const currentIndex = inputNumber.index(this);
+        const nextIndex = currentIndex + 1;
+        let value = $(this).val();
+        
+        if ($(this).val().length === 1) {
+          if (nextIndex < inputNumber.length) {
+            inputNumber.eq(nextIndex).focus();
+          } else {
+            $(this).blur();
+            $('.btn-delete').removeClass('disabled');
+          }
+        }
+        highlightResults();
+      });
+
+      
+      inputNumber.on("focus", function () {
+        if ($(this).val() !== "") {
+          $(this).select(); 
+        }
+      });
+      
+      // Xử lý khi nhấn phím Backspace
+      inputNumber.on("keydown", function (e) {
+        const currentIndex = inputNumber.index(this);
+
+        if (e.key === "Backspace" && $(this).val() === "" && currentIndex > 0) {
+          inputNumber.eq(currentIndex - 1).focus().val("");
+          highlightResults();
+        }
+      });
+
+      // Highlight các số trúng
+      function highlightResults() {
+        const inputs = $(".numberInput").map(function () {
+          return $(this).val();
+        }).get();
+
+        $("#resultList .result-item").each(function () {
+          const resultText = $(this).text();
+          const resultLength = resultText.length;
+
+          $(this).html(
+            resultText
+              .split("")
+              .map((digit, index) => {
+                const position = index + 7 - resultLength;
+                return inputs[position - 1] === digit
+                  ? `<span class="highlight">${digit}</span>`
+                  : digit;
+              })
+              .join("")
+          );
+        });
+      }
+
+      const minDate = new Date("2021-01-01"); // Ngày đầu tiên có dữ liệu
+      const maxDate = new Date(); // Ngày hiện tại
+      
+      
+
+
+      // Khởi tạo flatpickr
+      const datePicker = flatpickr("#datePicker", {
+        dateFormat: "d-m-Y", // Định dạng ngày
+        minDate: minDate, // Thiết lập ngày nhỏ nhất
+        maxDate: maxDate, // Thiết lập ngày lớn nhất
+        defaultDate: maxDate, // Mặc định là ngày hiện tại
+        disableMobile: true,
+        theme: "dark",
+        onChange: function (selectedDates) {
+          const selectedDate = selectedDates[0];
+          if (selectedDate) {
+            checkResults(selectedDate); // Gọi hàm kiểm tra kết quả
+          }
+        }
+      });
+
+      
+
+      // Hàm định dạng ngày
+      function formatDate(date) {
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      }
+      
+      
+      $('#citySelect').select2({
+        placeholder: "Chọn Đài",
+        allowClear: true,
+        width: 'resolve',
+        minimumResultsForSearch: Infinity // Ẩn input search
+      });
+      
+      $("#citySelect").on("change", function () {
+        const cityId = $(this).val();
+        const region = $("#citySelect option:selected").data("region");
+        const date = new Date(datePicker.selectedDates[0]);
+        if (cityId && !isNaN(date.getTime())) {
+          fetchResults(date, cityId, region);
+        } else {
+          alert("Vui lòng chọn đài và ngày hợp lệ.");
+        }
+      });
+      
+      // Kiểm tra kết quả và tự động lùi ngày nếu cần
+      function checkResults(date) {
+        const formattedDate = formatDate(date);
+
+        $.getJSON(`${cityApiUrl}?date=${formattedDate}`, function (data) {
+          const cities = data.data.rows;
+
+          if (Array.isArray(cities) && cities.length > 0) {
+            const citySelect = $("#citySelect");
+            citySelect.empty();
+            cities.forEach(function (city, index) {
+              citySelect.append(`
+                <option value="${city.id}" data-region="${city.region}" ${index === 0 ? "selected" : ""}>
+                  ${city.name}
+                </option>
+              `);
+            });
+
+            
+            
+            const firstCityId = cities[0].id;
+            const firstCityRegion = cities[0].region;
+            fetchResults(date, firstCityId, firstCityRegion);
+          } else {
+            const newDate = new Date(date);
+            newDate.setDate(newDate.getDate() - 1);
+            datePicker.setDate(newDate); // Cập nhật flatpickr
+            checkResults(newDate); // Gọi lại để kiểm tra ngày mới
+          }
+        }).fail(function () {
+          $("#resultList").append(`
+            <td colspan="2">
+                <div class="error-xoso">Không thể kết nối đến API đài xổ số.</div>
+            </td>
+          `);
+        });
+      }
+
+      // Lấy kết quả xổ số
+      function fetchResults(date, cityId, region) {
+        const formattedDate = formatDate(date);
+        const apiUrl = `${resultApiUrl}?date=${formattedDate}&city=${cityId}`;
+        $('#loading').show();
+        $.getJSON(apiUrl, function (data) {
+          const results = data.data.rows.result;
+
+          if (results && Object.keys(results).length > 0) {
+            $("#resultList").empty();
+            $('#loading').hide();
+            const appendResultRow = (prize, result) => {
+              const resultArray = result.split("-");
+              const formattedResults = resultArray
+                .map((res) => `<div class="result-item">${res.trim()}</div>`)
+                .join("");
+              $("#resultList").append(`
+                <tr>
+                  <td width="60">${prize}</td>
+                  <td>${formattedResults}</td>
+                </tr>
+              `);
+            };
+
+            appendResultRow("Giải ĐB", results.special);
+            appendResultRow("Giải 1", results.prize1);
+            appendResultRow("Giải 2", results.prize2);
+            appendResultRow("Giải 3", results.prize3);
+            appendResultRow("Giải 4", results.prize4);
+            appendResultRow("Giải 5", results.prize5);
+            appendResultRow("Giải 6", results.prize6);
+            appendResultRow("Giải 7", results.prize7);
+
+            if (region !== "bac") {
+              appendResultRow("Giải 8", results.prize8);
+            }
+          } else {
+            const newDate = new Date(date);
+            newDate.setDate(newDate.getDate() - 1);
+            datePicker.setDate(newDate); // Cập nhật flatpickr
+            checkResults(newDate); // Gọi lại để kiểm tra ngày mới
+          }
+        }).fail(function () {
+          alert("Không thể kết nối đến API kết quả xổ số.");
+        });
+      }
+
+      // Tự động kiểm tra ngày hiện tại khi mở trang
+      checkResults(maxDate);
+ 
+
+      
+    });
+  </script>
+</body>
+</html>
