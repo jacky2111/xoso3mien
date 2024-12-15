@@ -341,6 +341,14 @@ animation: l13 1s infinite linear;
       });
       // Xử lý input tự động chuyển vị trí và giới hạn giá trị
       inputNumber.on("input", function () {
+        
+          const currentValue = $(this).val(); // Lấy giá trị hiện tại trong ô input
+    
+          // Giới hạn không cho nhập quá 2 ký tự
+          if (currentValue.length > 1) {
+              $(this).val(currentValue.slice(-1)); // Lấy ký tự cuối cùng (ký tự mới nhập vào)
+          }
+        
           const currentIndex = inputNumber.index(this);
           const nextIndex = currentIndex + 1;
           const visibleInputs = $(".numberInput:visible"); // Lấy các ô input hiển thị
@@ -362,7 +370,7 @@ animation: l13 1s infinite linear;
       
       inputNumber.on("focus", function () {
         if ($(this).val() !== "") {
-          $(this).select(); 
+          $(this).val(); 
         }
       });
       
