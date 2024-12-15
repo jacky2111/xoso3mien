@@ -333,7 +333,6 @@ animation: l13 1s infinite linear;
       const inputNumber = $(".numberInput");
       
       
-      
       $('.btn-delete').click(function () {
           inputNumber.val("");
           inputNumber.first().focus();
@@ -379,51 +378,28 @@ animation: l13 1s infinite linear;
 
       // Highlight các số trúng
       function highlightResults() {
-          const inputs = $(".numberInput:visible"); // Chỉ lấy các ô input hiển thị
+          const inputs = $(".numberInput:visible"); // Lấy các ô input đang hiển thị
           const inputValues = inputs.map(function () {
               return $(this).val();
-          }).get(); // Lấy giá trị của từng input
-
-          // Lấy thông tin miền từ đài
-          const region = $("#citySelect option:selected").data("region");
-
-          // Reset highlight cho tất cả input
-          inputs.removeClass("highlight-input");
+          }).get(); // Lấy giá trị từ các input (bao gồm cả giá trị rỗng)
 
           $("#resultList .result-item").each(function () {
               const resultText = $(this).text().trim(); // Chuỗi kết quả từ API
+              const resultArray = resultText.split(""); // Chuyển kết quả thành mảng ký tự
+              const resultLength = resultText.length; // Độ dài của kết quả
+              const region = $("#citySelect option:selected").data("region");
+              const offset = region === "bac" ? 6 : 7; // Xác định offset dựa trên miền Bắc hay các đài khác
+
               $(this).html(""); // Reset nội dung
 
-              if (region === "bac") {
-                  // Logic cho miền Bắc: So sánh từ cuối chuỗi kết quả
-                  const resultLength = resultText.length;
-                  const inputLength = inputValues.filter(val => val !== "").length; // Chỉ tính các ô đã nhập giá trị
-                  const startCompareIndex = resultLength - inputLength;
-
-                  resultText.split("").forEach((digit, index) => {
-                      if (index >= startCompareIndex && inputValues[index - startCompareIndex] === digit) {
-                          // Highlight số khớp
-                          $(this).append(`<span class="highlight">${digit}</span>`);
-                          inputs.eq(index - startCompareIndex).addClass("highlight-input"); // Highlight input tương ứng
-                      } else {
-                          $(this).append(digit);
-                      }
-                  });
-              } else {
-                  // Logic cho miền Trung/Nam: So sánh với nhiều giải
-                  const resultLength = resultText.length;
-                  $(this).html(
-                      resultText
-                          .split("")
-                          .map((digit, index) => {
-                              const position = index + 7 - resultLength;
-                              return inputValues[position - 1] === digit
-                                  ? `<span class="highlight">${digit}</span>`
-                                  : digit;
-                          })
-                          .join("")
-                  );
-              }
+              resultArray.forEach((digit, index) => {
+                  const position = index + offset - resultLength; // Tính vị trí linh hoạt
+                  if (inputValues[position - 1] === digit) {
+                      $(this).append(`<span class="highlight">${digit}</span>`); // Highlight số khớp
+                  } else {
+                      $(this).append(digit); // Hiển thị số bình thường
+                  }
+              });
           });
       }
 
@@ -472,7 +448,7 @@ animation: l13 1s infinite linear;
         const cityId = $(this).val();
         const region = $("#citySelect option:selected").data("region");
         const date = new Date(datePicker.selectedDates[0]);
-
+        inputNumber.val("");
         // Hiển thị hoặc ẩn các ô nhập số
         if (region === "bac") {
             $(".numberInput").slice(5).hide(); // Ẩn ô nhập số thứ 6
