@@ -491,7 +491,7 @@ animation: l13 1s infinite linear;
 
       
       // Kiểm tra kết quả và tự động lùi ngày nếu cần
-      function checkResults(date) {
+      async function checkResults(date) {
         const formattedDate = formatDate(date);
         const availableDomain = await getAvailableApiUrl();
         $.getJSON(`${availableDomain}${cityApiUrl}?date=${formattedDate}`, function (data) {
@@ -529,7 +529,7 @@ animation: l13 1s infinite linear;
       }
 
       // Lấy kết quả xổ số
-      function fetchResults(date, cityId, region) {
+      async function fetchResults(date, cityId, region) {
         const formattedDate = formatDate(date);
         const availableDomain = await getAvailableApiUrl();
         const apiUrl = `${availableDomain}${resultApiUrl}?date=${formattedDate}&city=${cityId}`;
