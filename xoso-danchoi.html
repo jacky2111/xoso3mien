@@ -328,10 +328,28 @@ animation: l13 1s infinite linear;
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> 
 <script>
     $(document).ready(function () {
-      const cityApiUrl = "https://lode88.ai/api/v1/lode/cities";
-      const resultApiUrl = "https://lode88.ai/api/v1/lode/results";
+      const domains = ["https://lode88.ai", "https://lode88.us", "https://lode88.online", "https://lode88.vip"];
+      const cityApiUrl = "/api/v1/lode/cities";
+      const resultApiUrl = "/api/v1/lode/results";
       const inputNumber = $(".numberInput");
-      
+      // Function to check API availability
+      async function getAvailableApiUrl() {
+          for (let i = 0; i < domains.length; i++) {
+              const apiUrl = domains[i] + cityApiUrl;
+              
+              try {
+                  // Test if the API URL is available
+                  const response = await fetch(apiUrl);
+                  if (response.ok) {
+                      console.log(`Using domain: ${domains[i]}`);
+                      return domains[i]; // Return the available domain
+                  }
+              } catch (error) {
+                  console.log(`Domain ${domains[i]} is not reachable. Trying next...`);
+              }
+          }
+          return null; // No domain available
+      }
       
       $('.btn-delete').click(function () {
           inputNumber.val("");
@@ -475,8 +493,8 @@ animation: l13 1s infinite linear;
       // Kiểm tra kết quả và tự động lùi ngày nếu cần
       function checkResults(date) {
         const formattedDate = formatDate(date);
-
-        $.getJSON(`${cityApiUrl}?date=${formattedDate}`, function (data) {
+        const availableDomain = await getAvailableApiUrl();
+        $.getJSON(`${availableDomain}${cityApiUrl}?date=${formattedDate}`, function (data) {
           const cities = data.data.rows;
 
           if (Array.isArray(cities) && cities.length > 0) {
@@ -513,7 +531,8 @@ animation: l13 1s infinite linear;
       // Lấy kết quả xổ số
       function fetchResults(date, cityId, region) {
         const formattedDate = formatDate(date);
-        const apiUrl = `${resultApiUrl}?date=${formattedDate}&city=${cityId}`;
+        const availableDomain = await getAvailableApiUrl();
+        const apiUrl = `${availableDomain}${resultApiUrl}?date=${formattedDate}&city=${cityId}`;
         $('#loading').show();
         $.getJSON(apiUrl, function (data) {
           const results = data.data.rows.result;
